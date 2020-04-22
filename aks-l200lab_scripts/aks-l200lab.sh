@@ -343,7 +343,7 @@ function lab_scenario_4_validation () {
         exit 6
     elif [ $LAB_TAG -eq $LAB_SCENARIO ]
     then
-        if $(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query provisioningState -o tsv | grep -q "Succeeded")
+        if $(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query provisioningState -o tsv | grep -q "Succeeded") && $(kubectl get no | grep -q " Ready ")
         then
             echo -e "\n\n========================================================"
             echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nA Piece of Cake\n"
