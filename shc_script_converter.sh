@@ -9,8 +9,8 @@ then
     exit 4
 fi
 
-aks-l200lab_SCRIPTS="$(ls ./aks-l200lab_scripts/)"
-if [ -z "$aks-l200lab_SCRIPTS" ]
+SCRIPT_FILES="$(ls ./aks-l200lab_scripts/)"
+if [ -z "$SCRIPT_FILES" ]
 then
     echo -e "Error: missing aks-l200lab scripts...\n"
     exit 5
@@ -23,7 +23,7 @@ function convert_to_binary() {
     rm -f ./aks-l200lab_scripts/${SCRIPT_NAME}.x.c > /dev/null 2>&1
 }
 
-for FILE in $(echo "$aks-l200lab_SCRIPTS")
+for FILE in $(echo "$SCRIPT_FILES")
 do
     convert_to_binary $FILE
 done
