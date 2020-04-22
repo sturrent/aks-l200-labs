@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.0 20200422
+# Version v0.1.1 20200422
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.0 20200422"
+SCRIPT_VERSION="Version v0.1.1 20200422"
 
 # Funtion definition
 
@@ -330,7 +330,7 @@ function lab_scenario_4 () {
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
     echo -e "\n\n********************************************************"
-    echo -e "\nCluster deployment failed...\n"
+    echo -e "\nLab environment is ready. Cluster deployment failed, looks like an issue with VM custom script extention...\n"
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
