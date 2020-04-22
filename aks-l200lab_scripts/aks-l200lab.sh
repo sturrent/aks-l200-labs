@@ -399,15 +399,15 @@ then
 	echo "aks-l200lab usage: aks-l200lab -g <RESOURCE_GROUP> -n <CLUSTER_NAME> -l <LAB#> [-v|--validate] [-r|--region] [-h|--help] [--version]"
     echo -e "\nHere is the list of current labs available:\n
 ***************************************************************
-*\t 1. Node not ready
-*\t 2. Cluster is in failed state
-*\t 3. Cluster Scaling issue, missing one node
-*\t 4. Problem with accessing dashboard
-*\t 5. Cluster unable to communicate with API server
+*\t 1. Kubectl exec and logs commands not working
+*\t 2. Pods dns queries failing
+*\t 3. LoadBalancer service in pending state
+*\t 4. AKS failed deployment
+*\t 5. Network capture required
 ***************************************************************\n"
     echo -e '"-g|--resource-group" resource group name
 "-n|--name" AKS cluster name
-"-l|--lab" Lab scenario to deploy (5 possible options)
+"-l|--lab" Lab scenario to deploy
 "-r|--region" region to create the resources
 "-v|--validate" Validate a particular scenario
 "--version" print version of aks-l200lab
@@ -438,11 +438,11 @@ if [ -z $LAB_SCENARIO ]; then
 	echo -e "aks-l200lab usage: aks-l200lab -g <RESOURCE_GROUP> -n <CLUSTER_NAME> -l <LAB#> [-v|--validate] [-r|--region] [-h|--help] [--version]\n"
     echo -e "\nHere is the list of current labs available:\n
 ***************************************************************
-*\t 1. Node not ready
-*\t 2. Cluster is in failed state
-*\t 3. Cluster Scaling issue
-*\t 4. Problem with accessing dashboard
-*\t 5. Cluster unable to communicate with API server
+*\t 1. Kubectl exec and logs commands not working
+*\t 2. Pods dns queries failing
+*\t 3. LoadBalancer service in pending state
+*\t 4. AKS failed deployment
+*\t 5. Network capture required
 ***************************************************************\n"
 	exit 9
 fi
