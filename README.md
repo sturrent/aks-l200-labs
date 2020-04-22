@@ -21,16 +21,16 @@ aks-l200lab usage: aks-l200lab -g <RESOURCE_GROUP> -n <CLUSTER_NAME> -l <LAB#> [
 Here is the list of current labs available:
 
 ***************************************************************
-*        1. Node not ready
-*        2. Cluster is in failed state
-*        3. Cluster Scaling issue, missing one node
-*        4. Problem with accessing dashboard
-*        5. Cluster unable to communicate with API server
+*        1. Kubectl exec and logs commands not working
+*        2. Pods dns queries failing
+*        3. LoadBalancer service in pending state
+*        4. AKS failed deployment
+*        5. Network capture required
 ***************************************************************
 
 "-g|--resource-group" resource group name
 "-n|--name" AKS cluster name
-"-l|--lab" Lab scenario to deploy (5 possible options)
+"-l|--lab" Lab scenario to deploy
 "-r|--region" region to create the resources
 "-v|--validate" Validate a particular scenario
 "--version" print version of aks-l200lab
