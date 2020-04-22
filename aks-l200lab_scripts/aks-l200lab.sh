@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.0 20200421
+# Version v0.1.0 20200422
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.0 20200421"
+SCRIPT_VERSION="Version v0.1.0 20200422"
 
 # Funtion definition
 
@@ -128,9 +128,10 @@ function lab_scenario_1 () {
     --protocol Tcp \
     --description "Security test" &>/dev/null
 
-    kubectl delete po -n kube-system -l k8s-app=kube-dns
+    kubectl -n kube-system delete po -l component=tunnel &>/dev/null
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
+    echo -e "\n\n********************************************************"
     echo -e "Not able to execute kubectl logs or kubectl exec commands...\n"
     echo -e "Cluster uri == ${CLUSTER_URI}\n"
 }
@@ -145,12 +146,13 @@ function lab_scenario_1_validation () {
     elif [ $LAB_TAG -eq 1 ]
     then
         az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
-        TUNNEL_STATUS="$(timeout 50 kubectl -n kube-system logs -l component=tunnel; echo $?)"
-        if [ $TUNNEL_STATUS -ne 0 ]
+        TUNNEL_STATUS="$(timeout 50 kubectl -n kube-system logs -l component=tunnel &>/dev/null; echo $?)"
+        if [ $TUNNEL_STATUS -eq 0 ]
         then
-            echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
-        else
+            echo -e "\n\n========================================================"
             echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nSecret Phrase One\n"
+        else
+            echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
     else
         echo -e "\nError: Cluster $CLUSTER_NAME in resource group $RESOURCE_GROUP was not created with this tool for lab $LAB_SCENARIO and cannot be validated...\n"
@@ -190,6 +192,9 @@ data:
 EOF
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
+
+    kubectl -n kube-system delete po -l k8s-app=kube-dns &>/dev/null
+
     echo -e "\n\n********************************************************"
     echo -e "\nDNS resolution is not working for pods...\n"
     echo -e "Cluster uri == ${CLUSTER_URI}\n"
@@ -208,7 +213,8 @@ function lab_scenario_2_validation () {
         DNS_STATUS=""
         if ! $(kubectl -n kube-system get po -l k8s-app=kube-dns | grep -q CrashLoopBackOff) && $(kubectl -n kube-system get po -l k8s-app=kube-dns | grep -q Running)
         then
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\Every Cloud Has a SilverLining\n"
+            echo -e "\n\n========================================================"
+            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nEvery Cloud Has a Silver Lining\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
@@ -256,7 +262,8 @@ spec:
 EOF
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    echo "Cluster has a service called azure-load-balancer in pending state on the kube-system namespace..."
+    echo -e "\n\n********************************************************"
+    echo -e "\nCluster has a service called azure-load-balancer in pending state on the kube-system namespace..."
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
@@ -273,7 +280,8 @@ function lab_scenario_3_validation () {
         PUBLIC_IP="$(az network public-ip show -g $RESOURCE_GROUP -n l200lab-testip --query ipAddress -o tsv)"
         if ! $(kubectl -n kube-system get svc azure-load-balancer | grep -q '<pending>') && $(kubectl -n kube-system get svc azure-load-balancer | grep -q $PUBLIC_IP)
         then
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\All Greek To Me\n"
+            echo -e "\n\n========================================================"
+            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nAll Greek To Me\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
@@ -294,7 +302,7 @@ function lab_scenario_4 () {
         --dns-servers 172.20.50.2 \
         --subnet-name $SUBNET_NAME \
         --subnet-prefix 192.168.100.0/24 \
-        -o table
+        -o table &>/dev/null
         
         SUBNET_ID=$(az network vnet subnet list \
         --resource-group $RESOURCE_GROUP \
@@ -321,7 +329,8 @@ function lab_scenario_4 () {
     az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    echo -e "\n\nCluster deployment failed...\n"
+    echo -e "\n\n********************************************************"
+    echo -e "\nCluster deployment failed...\n"
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
@@ -336,6 +345,7 @@ function lab_scenario_4_validation () {
     then
         if $(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query provisioningState -o tsv | grep -q "Succeeded")
         then
+            echo -e "\n\n========================================================"
             echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nA Piece of Cake\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
@@ -385,6 +395,7 @@ function lab_scenario_5_validation () {
         then
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         else
+            echo -e "\n\n========================================================"
             echo -e "\nCluster looks good now, the keyword for the assesment is:\n\namountdevicerose\n"
         fi
     else
