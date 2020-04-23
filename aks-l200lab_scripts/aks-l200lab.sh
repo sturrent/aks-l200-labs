@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.5 20200423
+# Version v0.1.7 20200423
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.5 20200423"
+SCRIPT_VERSION="Version v0.1.7 20200423"
 
 # Funtion definition
 
@@ -439,9 +439,9 @@ EOF
 
     echo -e "\n\n========================================================"
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 80.\n"
-    echo -e "The data has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase.\n"
-    echo -e "Hit, you can use something like https://github.com/eldadru/ksniff\n"
+    echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 8080."
+    echo -e "The data is beeing send every 5 seconds and it has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase."
+    echo -e "Hint: you can use something like https://github.com/eldadru/ksniff to caputer the traffic and analyse the tcp stream with Wireshark.\n"
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
@@ -456,9 +456,9 @@ function lab_scenario_5_validation () {
     then
         az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
         echo -e "\n\n========================================================"
-        echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 80.\n"
-        echo -e "The data has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase.\n"
-        echo -e "Hit, you can use something like https://github.com/eldadru/ksniff\n"
+        echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 8080."
+        echo -e "The data is beeing send every 5 seconds and it has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase."
+        echo -e "Hint: you can use something like https://github.com/eldadru/ksniff to caputer the traffic and analyse the tcp stream with Wireshark.\n"
     else
         echo -e "\nError: Cluster $CLUSTER_NAME in resource group $RESOURCE_GROUP was not created with this tool for lab $LAB_SCENARIO and cannot be validated...\n"
         exit 6
