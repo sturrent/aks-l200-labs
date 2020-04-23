@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.3 20200422
+# Version v0.1.4 20200423
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.3 20200422"
+SCRIPT_VERSION="Version v0.1.4 20200423"
 
 # Funtion definition
 
@@ -363,22 +363,85 @@ function lab_scenario_5 () {
     --resource-group $RESOURCE_GROUP \
     --name $CLUSTER_NAME \
     --location $LOCATION \
-    --node-count 1 \
-    --vm-set-type AvailabilitySet \
+    --node-count 2 \
     --generate-ssh-keys \
     --tag l200lab=${LAB_SCENARIO} \
     -o table
 
     validate_cluster_exists
-    NODE_RESOURCE_GROUP="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query nodeResourceGroup -o tsv)"
-    VNET_NAME="$(az network vnet list -g $NODE_RESOURCE_GROUP --query [0].name -o tsv)"
-    echo -e "\nCompleting the lab setup..."
-    az network vnet update -g $NODE_RESOURCE_GROUP -n $VNET_NAME --dns-servers 10.2.0.8 &>/dev/null
-    VM_NODE_0="$(az vm list -g $NODE_RESOURCE_GROUP --query [0].name -o tsv)"
-    az vm restart -g $NODE_RESOURCE_GROUP -n $VM_NODE_0 --no-wait
+
     az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
+    NODE_RESOURCE_GROUP="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query nodeResourceGroup -o tsv)"
+
+    echo -e "\nCompleting the lab setup..."
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fe-pod
+  name: fe-pod-svc
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: fe-pod
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-pod
+  labels:
+    app: be-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: be-pod
+  template:
+    metadata:
+      labels:
+        app: be-pod
+    spec:
+      containers:
+      - name: be-pod
+        imagePullPolicy: Always
+        image: sturrent/be-pod:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-pod
+  labels:
+    app: fe-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fe-pod
+  template:
+    metadata:
+      labels:
+        app: fe-pod
+    spec:
+      containers:
+      - name: fe-pod
+        imagePullPolicy: Always
+        image: sturrent/fe-pod:latest
+        ports:
+        - containerPort: 8080
+EOF    
+
+    echo -e "\n\n========================================================"
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    echo -e "\n\nThere are issues with one node in NotReady\n"
+    echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 80.\n"
+    echo -e "The data has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase.\n"
+    echo -e "Hit, you can use something like https://github.com/eldadru/ksniff\n"
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
@@ -392,13 +455,10 @@ function lab_scenario_5_validation () {
     elif [ $LAB_TAG -eq $LAB_SCENARIO ]
     then
         az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
-        if $(kubectl get nodes | grep -q "NotReady")
-        then
-            echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
-        else
-            echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\namountdevicerose\n"
-        fi
+        echo -e "\n\n========================================================"
+        echo -e "\n\nCluster has two deployments fe-pod and be-pod. The pod on be-pod is sending data to pod in fe-pod over port 80.\n"
+        echo -e "The data has the secret phrase in plain text. Setup a capture on the fe-pod and analyse the tcp stream to get the secret phrase.\n"
+        echo -e "Hit, you can use something like https://github.com/eldadru/ksniff\n"
     else
         echo -e "\nError: Cluster $CLUSTER_NAME in resource group $RESOURCE_GROUP was not created with this tool for lab $LAB_SCENARIO and cannot be validated...\n"
         exit 6
