@@ -111,9 +111,6 @@ function lab_scenario_1 () {
     -o table
 
     validate_cluster_exists
-
-    echo -e "Getting kubectl credentials for the cluster...\n"
-    az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing
     
     NODE_RESOURCE_GROUP="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query nodeResourceGroup -o tsv)"
     echo -e "\n\nPlease wait while we are preparing the environment for you to troubleshoot..."
@@ -129,6 +126,7 @@ function lab_scenario_1 () {
     --description "Security test" &>/dev/null
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
+    az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing
     kubectl -n kube-system delete po -l component=tunnel &>/dev/null
     echo -e "\n\n********************************************************"
     echo -e "Not able to execute kubectl logs or kubectl exec commands...\n"
