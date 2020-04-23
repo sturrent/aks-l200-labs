@@ -128,9 +128,8 @@ function lab_scenario_1 () {
     --protocol Tcp \
     --description "Security test" &>/dev/null
 
-    kubectl -n kube-system delete po -l component=tunnel &>/dev/null
-
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
+    kubectl -n kube-system delete po -l component=tunnel &>/dev/null
     echo -e "\n\n********************************************************"
     echo -e "Not able to execute kubectl logs or kubectl exec commands...\n"
     echo -e "Cluster uri == ${CLUSTER_URI}\n"
