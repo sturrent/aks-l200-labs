@@ -435,7 +435,7 @@ spec:
         image: sturrent/fe-pod:latest
         ports:
         - containerPort: 8080
-EOF    
+EOF
 
     echo -e "\n\n========================================================"
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
