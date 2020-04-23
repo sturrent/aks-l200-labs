@@ -147,7 +147,7 @@ function lab_scenario_1_validation () {
         if [ $TUNNEL_STATUS -eq 0 ]
         then
             echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nSecret Phrase One\n"
+            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nSwinging For the Fences\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
