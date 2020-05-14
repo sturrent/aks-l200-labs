@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.7 20200423
+# Version v0.1.8 20200514
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.7 20200423"
+SCRIPT_VERSION="Version v0.1.8 20200514"
 
 # Funtion definition
 
@@ -134,6 +134,8 @@ function lab_scenario_1 () {
 }
 
 function lab_scenario_1_validation () {
+    echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    echo -e "Running validation for Lab scenario $LAB_SCENARIO\n"
     validate_cluster_exists
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags.l200lab -o tsv)"
     if [ -z $LAB_TAG ]
@@ -198,6 +200,8 @@ EOF
 }
 
 function lab_scenario_2_validation () {
+    echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    echo -e "Running validation for Lab scenario $LAB_SCENARIO\n"
     validate_cluster_exists
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags.l200lab -o tsv)"
     if [ -z $LAB_TAG ]
@@ -265,6 +269,8 @@ EOF
 }
 
 function lab_scenario_3_validation () {
+    echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    echo -e "Running validation for Lab scenario $LAB_SCENARIO\n"
     validate_cluster_exists
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags.l200lab -o tsv)"
     if [ -z $LAB_TAG ]
@@ -332,6 +338,8 @@ function lab_scenario_4 () {
 }
 
 function lab_scenario_4_validation () {
+    echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    echo -e "Running validation for Lab scenario $LAB_SCENARIO\n"
     validate_cluster_exists
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags.l200lab -o tsv)"
     if [ -z $LAB_TAG ]
@@ -443,6 +451,8 @@ EOF
 }
 
 function lab_scenario_5_validation () {
+    echo -e "\n+++++++++++++++++++++++++++++++++++++++++++++++++++"
+    echo -e "Running validation for Lab scenario $LAB_SCENARIO\n"
     validate_cluster_exists
     LAB_TAG="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query tags.l200lab -o tsv)"
     if [ -z $LAB_TAG ]
