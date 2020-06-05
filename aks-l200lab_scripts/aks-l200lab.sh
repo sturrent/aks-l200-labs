@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.9 20200514
+# Version v0.1.10 20200605
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.9 20200514"
+SCRIPT_VERSION="Version v0.1.10 20200605"
 
 # Funtion definition
 
@@ -114,20 +114,23 @@ function lab_scenario_1 () {
     
     NODE_RESOURCE_GROUP="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query nodeResourceGroup -o tsv)"
     echo -e "\n\nPlease wait while we are preparing the environment for you to troubleshoot..."
-    CLUSTER_NSG="$(az network nsg list -g $NODE_RESOURCE_GROUP --query [0].name -o tsv)"
+    #CLUSTER_NSG="$(az network nsg list -g $NODE_RESOURCE_GROUP --query [0].name -o tsv)"
+    CLUSTER_NSG="$(az network nsg list -o table | grep $NODE_RESOURCE_GROUP | awk '{print $2}')"
     az network nsg rule create -g $NODE_RESOURCE_GROUP --nsg-name $CLUSTER_NSG \
     -n SecRule1  --priority 200 \
     --source-address-prefixes VirtualNetwork \
     --destination-address-prefixes Internet \
-    --destination-port-ranges "9000" \
+    --destination-port-ranges 9000 1194 \
     --direction Outbound \
     --access Deny \
-    --protocol Tcp \
+    --protocol '*' \
     --description "Security test" &>/dev/null
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
+    sleep 50
     az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing
-    kubectl -n kube-system delete po -l component=tunnel &>/dev/null
+    kubectl -n kube-system delete deploy tunnelfront &>/dev/null
+    kubectl -n kube-system delete deploy aks-link &>/dev/null
     echo -e "\n\n********************************************************"
     echo -e "Not able to execute kubectl logs or kubectl exec commands...\n"
     echo -e "Cluster uri == ${CLUSTER_URI}\n"
@@ -145,7 +148,7 @@ function lab_scenario_1_validation () {
     elif [ $LAB_TAG -eq 1 ]
     then
         az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing &>/dev/null
-        TUNNEL_STATUS="$(timeout 50 kubectl -n kube-system logs -l component=tunnel &>/dev/null; echo $?)"
+        TUNNEL_STATUS="$(timeout 50 kubectl -n kube-system logs -l component=kube-proxy &>/dev/null; echo $?)"
         if [ $TUNNEL_STATUS -eq 0 ]
         then
             echo -e "\n\n========================================================"
