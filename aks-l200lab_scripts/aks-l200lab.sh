@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.10 20200605
+# Version v0.1.11 20200624
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.10 20200605"
+SCRIPT_VERSION="Version v0.1.11 20200624"
 
 # Funtion definition
 
@@ -319,7 +319,6 @@ function lab_scenario_4 () {
         --resource-group $RESOURCE_GROUP \
         --name $CLUSTER_NAME \
         --location $LOCATION \
-        --kubernetes-version 1.15.7 \
         --node-count 2 \
         --node-osdisk-size 100 \
         --network-plugin azure \
