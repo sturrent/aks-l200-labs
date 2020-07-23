@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.11 20200624
+# Version v0.1.12 20200723
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.11 20200624"
+SCRIPT_VERSION="Version v0.1.12 20200723"
 
 # Funtion definition
 
@@ -127,7 +127,7 @@ function lab_scenario_1 () {
     --description "Security test" &>/dev/null
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
-    sleep 50
+    sleep 120
     az aks get-credentials -g $RESOURCE_GROUP -n $CLUSTER_NAME --overwrite-existing
     kubectl -n kube-system delete deploy tunnelfront &>/dev/null
     kubectl -n kube-system delete deploy aks-link &>/dev/null
@@ -267,7 +267,7 @@ EOF
 
     CLUSTER_URI="$(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query id -o tsv)"
     echo -e "\n\n********************************************************"
-    echo -e "\nCluster has a service called azure-load-balancer in pending state on the kube-system namespace..."
+    echo -e "\nCluster has a service called azure-load-balancer in pending state on the kube-system namespace, the requirement is to have it working with the existing IP that was configured there..."
     echo -e "\nCluster uri == ${CLUSTER_URI}\n"
 }
 
