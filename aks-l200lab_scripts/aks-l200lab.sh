@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # script name: aks-l200lab.sh
-# Version v0.1.12 20200723
+# Version v0.1.13 20201214
 # Set of tools to deploy L200 Azure containers labs
 
 # "-g|--resource-group" resource group name
@@ -55,7 +55,7 @@ done
 # Variable definition
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SCRIPT_NAME="$(echo $0 | sed 's|\.\/||g')"
-SCRIPT_VERSION="Version v0.1.12 20200723"
+SCRIPT_VERSION="Version v0.1.13 20201214"
 
 # Funtion definition
 
@@ -152,7 +152,7 @@ function lab_scenario_1_validation () {
         if [ $TUNNEL_STATUS -eq 0 ]
         then
             echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nSwinging For the Fences\n"
+            echo -e "\nCluster looks good now, the keyword for the assessment is:\n\nSwinging For the Fences\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
@@ -218,7 +218,7 @@ function lab_scenario_2_validation () {
         if ! $(kubectl -n kube-system get po -l k8s-app=kube-dns | grep -q CrashLoopBackOff) && $(kubectl -n kube-system get po -l k8s-app=kube-dns | grep -q Running)
         then
             echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nEvery Cloud Has a Silver Lining\n"
+            echo -e "\nCluster looks good now, the keyword for the assessment is:\n\nEvery Cloud Has a Silver Lining\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
@@ -287,7 +287,7 @@ function lab_scenario_3_validation () {
         if ! $(kubectl -n kube-system get svc azure-load-balancer | grep -q '<pending>') && $(kubectl -n kube-system get svc azure-load-balancer | grep -q $PUBLIC_IP)
         then
             echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nAll Greek To Me\n"
+            echo -e "\nCluster looks good now, the keyword for the assessment is:\n\nAll Greek To Me\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
@@ -354,7 +354,7 @@ function lab_scenario_4_validation () {
         if $(az aks show -g $RESOURCE_GROUP -n $CLUSTER_NAME --query provisioningState -o tsv | grep -q "Succeeded") && $(kubectl get no | grep -q " Ready ")
         then
             echo -e "\n\n========================================================"
-            echo -e "\nCluster looks good now, the keyword for the assesment is:\n\nA Piece of Cake\n"
+            echo -e "\nCluster looks good now, the keyword for the assessment is:\n\nA Piece of Cake\n"
         else
             echo -e "\nScenario $LAB_SCENARIO is still FAILED\n"
         fi
